@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>JSEditer</title>
+<link rel="stylesheet" href="http://dl.dropbox.com/u/7647582/jsedit/bootstrap.min.css" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="jse.css" type="text/css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="cm_codemirror.js"></script>
+<link rel="stylesheet" href="cm_codemirror.css">
+<script src="cm_javascript.js"></script>
+
+  <script type="text/javascript">
+  <!--
+	
+
+    function doJS(){
+	  var prev="";
+	  if($('#result').html()!=""){
+		prev=$('#result').html()+"<hr>";
+	  }
+	  $('#result').html(prev);
+      var jScript = document.getElementById('editCode').value;
+	  try{
+		eval(jScript);
+	  }catch(ex) { 
+		print("<h4 style='color:red;'>" + ex + "</h4>"); 
+	  }
+    }
+	
+	var print = function(string){	
+		var prev=$('#result').html();
+		$('#result').html(prev+string);
+	}
+	
+	var input = function(){
+		return $('#userinput').val();
+	}
+	
+	function clearResult(){
+		$('#result').empty();
+    }
+  -->
+  </script>
+</head>
+<body>
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+		<a class="brand" href="#">
+			JS Edit and Run.
+		</a>
+		<span class="pull-right">
+			v0.2.1
+		</span>
+		<div class="nav-collapse">
+		
+		</div>
+    </div>
+  </div>
+</div>
+<div>
+    
+</div>
+<div id="leftside" style="">
+
+<h3>Write Your Code</h3>
+  <textarea id="editCode">
+print("Hello World!\n");
+  </textarea><br/>
+  <input type="button" class="btn btn-primary btn-large" style="height:35px; padding:10px 30px;margin:5px 5px;"  value="実行" onclick="doJS();"/>
+  <input type="button" class="btn" value="実行結果消去" style="height:35px; padding:10px 10px;margin:5px 5px;" onclick="clearResult();"/>
+  <input type="text"  id="userinput" placeholder="=input()" style="height:20px;margin:5px 5px;">  
+  <br>
+  ※jQeueryやprint(),input()が使えます。<br>
+  ※コードは自動でブラウザに仮保存されます。
+
+  <br>
+</div>
+<div id="rightside" >
+	
+  <h3>Result</h3>
+  <pre id="result" ></pre>
+</div>
+  <script>
+  $.fn.extend({
+    insertAtCaret: function(v) {
+      var o = this.get(0);
+      o.focus();
+      if (jQuery.browser.msie) {
+        var r = document.selection.createRange();
+        r.text = v;
+        r.select();
+      } else {
+        var s = o.value;
+        var p = o.selectionStart;
+        var np = p + v.length;
+        o.value = s.substr(0, p) + v + s.substr(p);
+        o.setSelectionRange(np, np);
+      }
+    }
+});
+
+	$(function(){
+		
+	    if (localStorage.getItem('saveScript')){
+			$('#editCode').val(localStorage.getItem('saveScript'));
+		}
+		
+		if (localStorage.getItem('saveInput')){
+			$('#userinput').val(localStorage.getItem('saveInput'));
+		}
+		$('#userinput').bind('keyup', function() {
+			localStorage.setItem('saveInput', $('#userinput').val());
+		});
+		$("#userinput").keydown(function(e){
+		  var ENTERKEY=13;
+		  if(e.keyCode==ENTERKEY){	
+			doJS();
+		  }
+		});	
+
+		
+		var editor = CodeMirror.fromTextArea(document.getElementById("editCode"), {
+			lineNumbers: true,
+			matchBrackets: true,
+			onChange: function(editor){	
+				editor.save();
+				localStorage.setItem('saveScript', $('#editCode').val());
+			}
+		});
+    });
+  </script>
+</body>
+</html>
